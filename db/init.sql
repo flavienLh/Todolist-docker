@@ -1,4 +1,7 @@
-CREATE TABLE IF NOT EXISTS todos (
+DROP TABLE IF EXISTS todos;
+
+CREATE TABLE todos (
     id SERIAL PRIMARY KEY,
-    content TEXT NOT NULL
+    content TEXT NOT NULL,
+    completed BOOLEAN NOT NULL DEFAULT FALSE
 );

@@ -35,3 +35,8 @@ li {
     background-color: #f9f9f9;
     border-bottom: 1px solid #ddd;
 }
+
+li.completed {
+    text-decoration: line-through;
+    color: #999;
+}
