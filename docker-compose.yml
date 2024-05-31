@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  db:
+    build:
+      context: ./db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - todolist-network
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    networks:
+      - todolist-network
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - todolist-network
+
+volumes:
+  db-data:
+
+networks:
+  todolist-network:
