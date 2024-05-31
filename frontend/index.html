@@ -4,18 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Todo List</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app">
-        <h1>Todo List</h1>
-        <input type="text" id="todo-input" placeholder="Enter a new todo">
-        <button onclick="addTodo()">Add</button>
-        <h2>Current Todos</h2>
-        <ul id="todo-list"></ul>
-        <h2>Completed Todos</h2>
-        <ul id="completed-todo-list"></ul>
-    </div>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">Todo List</h1>
+            <div class="field has-addons">
+                <div class="control is-expanded">
+                    <input class="input" type="text" id="todo-input" placeholder="Enter a new todo">
+                </div>
+                <div class="control">
+                    <button class="button is-primary" onclick="addTodo()">Add</button>
+                </div>
+            </div>
+            <h2 class="subtitle">Current Todos</h2>
+            <ul id="todo-list" class="list"></ul>
+            <h2 class="subtitle">Completed Todos</h2>
+            <ul id="completed-todo-list" class="list"></ul>
+        </div>
+    </section>
     <script src="script.js"></script>
 </body>
 </html>

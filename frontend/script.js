@@ -13,11 +13,12 @@ function fetchTodos() {
             data.forEach(todo => {
                 const li = document.createElement("li");
                 li.textContent = todo.content;
-                li.dataset.id = todo.id;  // Add data-id for reference
+                li.dataset.id = todo.id;
 
                 const checkbox = document.createElement("input");
                 checkbox.type = "checkbox";
                 checkbox.checked = todo.completed;
+                checkbox.classList.add("mr-2");
                 checkbox.addEventListener("change", () => {
                     updateTodo(todo.id, { completed: checkbox.checked });
                 });
@@ -25,8 +26,12 @@ function fetchTodos() {
                 li.prepend(checkbox);
 
                 if (!todo.completed) {
+                    const buttons = document.createElement("div");
+                    buttons.classList.add("buttons");
+
                     const editButton = document.createElement("button");
                     editButton.textContent = "Edit";
+                    editButton.classList.add("button", "is-small", "is-info");
                     editButton.addEventListener("click", () => {
                         const newContent = prompt("Enter new content", todo.content);
                         if (newContent) {
@@ -36,12 +41,14 @@ function fetchTodos() {
 
                     const deleteButton = document.createElement("button");
                     deleteButton.textContent = "Delete";
+                    deleteButton.classList.add("button", "is-small", "is-danger");
                     deleteButton.addEventListener("click", () => {
                         deleteTodo(todo.id);
                     });
 
-                    li.appendChild(editButton);
-                    li.appendChild(deleteButton);
+                    buttons.appendChild(editButton);
+                    buttons.appendChild(deleteButton);
+                    li.appendChild(buttons);
 
                     todoList.appendChild(li);
                 } else {
@@ -55,7 +62,13 @@ function fetchTodos() {
 
 function addTodo() {
     const input = document.getElementById("todo-input");
-    const content = input.value;
+    const content = input.value.trim(); // Remove leading/trailing whitespace
+
+    if (!content) {
+        alert("Todo content cannot be empty!"); // Display an alert if the input is empty
+        return; // Exit the function if the input is empty
+    }
+
     fetch("http://localhost:5000/todos", {
         method: "POST",
         headers: {
@@ -68,17 +81,22 @@ function addTodo() {
         const todoList = document.getElementById("todo-list");
         const li = document.createElement("li");
         li.textContent = todo.content;
-        li.dataset.id = todo.id;  // Add data-id for reference
+        li.dataset.id = todo.id;
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.checked = todo.completed;
+        checkbox.classList.add("mr-2");
         checkbox.addEventListener("change", () => {
             updateTodo(todo.id, { completed: checkbox.checked });
         });
 
+        const buttons = document.createElement("div");
+        buttons.classList.add("buttons");
+
         const editButton = document.createElement("button");
         editButton.textContent = "Edit";
+        editButton.classList.add("button", "is-small", "is-info");
         editButton.addEventListener("click", () => {
             const newContent = prompt("Enter new content", todo.content);
             if (newContent) {
@@ -88,13 +106,15 @@ function addTodo() {
 
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
+        deleteButton.classList.add("button", "is-small", "is-danger");
         deleteButton.addEventListener("click", () => {
             deleteTodo(todo.id);
         });
 
         li.prepend(checkbox);
-        li.appendChild(editButton);
-        li.appendChild(deleteButton);
+        buttons.appendChild(editButton);
+        buttons.appendChild(deleteButton);
+        li.appendChild(buttons);
 
         todoList.appendChild(li);
         input.value = "";
@@ -118,6 +138,7 @@ function updateTodo(id, updates) {
             const checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.checked = todo.completed;
+            checkbox.classList.add("mr-2");
             checkbox.addEventListener("change", () => {
                 updateTodo(todo.id, { completed: checkbox.checked });
             });
@@ -125,8 +146,12 @@ function updateTodo(id, updates) {
             li.prepend(checkbox);
 
             if (!todo.completed) {
+                const buttons = document.createElement("div");
+                buttons.classList.add("buttons");
+
                 const editButton = document.createElement("button");
                 editButton.textContent = "Edit";
+                editButton.classList.add("button", "is-small", "is-info");
                 editButton.addEventListener("click", () => {
                     const newContent = prompt("Enter new content", todo.content);
                     if (newContent) {
@@ -136,12 +161,14 @@ function updateTodo(id, updates) {
 
                 const deleteButton = document.createElement("button");
                 deleteButton.textContent = "Delete";
+                deleteButton.classList.add("button", "is-small", "is-danger");
                 deleteButton.addEventListener("click", () => {
                     deleteTodo(todo.id);
                 });
 
-                li.appendChild(editButton);
-                li.appendChild(deleteButton);
+                buttons.appendChild(editButton);
+                buttons.appendChild(deleteButton);
+                li.appendChild(buttons);
 
                 li.classList.remove("completed");
                 document.getElementById("todo-list").appendChild(li);
