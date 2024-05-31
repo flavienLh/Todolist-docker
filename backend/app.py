@@ -64,5 +64,18 @@ def update_todo(id):
         conn.rollback()
         return jsonify({'error': 'Error updating todo'}), 500
 
+@app.route('/todos/completed', methods=['DELETE'])
+def delete_completed_todos():
+    try:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM todos WHERE completed = TRUE RETURNING id;")
+            deleted_ids = cur.fetchall()
+            conn.commit()
+        return jsonify([row[0] for row in deleted_ids])
+    except psycopg2.Error as e:
+        print(f"Error deleting completed todos: {e}")
+        conn.rollback()
+        return jsonify({'error': 'Error deleting completed todos'}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

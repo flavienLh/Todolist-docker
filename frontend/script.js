@@ -7,13 +7,13 @@ function fetchTodos() {
         .then(response => response.json())
         .then(data => {
             const todoList = document.getElementById("todo-list");
+            const completedTodoList = document.getElementById("completed-todo-list");
             todoList.innerHTML = "";
+            completedTodoList.innerHTML = "";
             data.forEach(todo => {
                 const li = document.createElement("li");
                 li.textContent = todo.content;
-                if (todo.completed) {
-                    li.classList.add("completed");
-                }
+                li.dataset.id = todo.id;  // Add data-id for reference
 
                 const checkbox = document.createElement("input");
                 checkbox.type = "checkbox";
@@ -23,7 +23,14 @@ function fetchTodos() {
                 });
 
                 li.prepend(checkbox);
-                todoList.appendChild(li);
+
+                if (todo.completed) {
+                    li.classList.add("completed");
+                    completedTodoList.appendChild(li);
+                    setTimeout(() => deleteCompletedTodos(), 300000); // 300000ms = 5 minutes
+                } else {
+                    todoList.appendChild(li);
+                }
             });
         });
 }
@@ -43,6 +50,7 @@ function addTodo() {
         const todoList = document.getElementById("todo-list");
         const li = document.createElement("li");
         li.textContent = todo.content;
+        li.dataset.id = todo.id;  // Add data-id for reference
 
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
@@ -68,12 +76,28 @@ function updateTodo(id, completed) {
     })
     .then(response => response.json())
     .then(todo => {
-        const li = document.querySelector(`li[data-id='${todo.id}']`);
-        if (todo.completed) {
-            li.classList.add("completed");
-        } else {
-            li.classList.remove("completed");
+        const li = document.querySelector(`li[data-id='${id}']`);
+        if (li) {
+            if (completed) {
+                li.classList.add("completed");
+                document.getElementById("completed-todo-list").appendChild(li);
+            } else {
+                li.classList.remove("completed");
+                document.getElementById("todo-list").appendChild(li);
+            }
         }
     })
     .catch(error => console.error('Error updating todo:', error));
+}
+
+function deleteCompletedTodos() {
+    fetch("http://localhost:5000/todos/completed", {
+        method: "DELETE",
+    })
+    .then(response => response.json())
+    .then(deletedIds => {
+        console.log('Deleted completed todos:', deletedIds);
+        fetchTodos(); // Refresh the list to remove deleted todos
+    })
+    .catch(error => console.error('Error deleting completed todos:', error));
 }
