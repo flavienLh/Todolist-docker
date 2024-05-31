@@ -51,10 +51,22 @@ def add_todo():
 
 @app.route('/todos/<int:id>', methods=['PATCH'])
 def update_todo(id):
-    completed = request.json['completed']
+    content = request.json.get('content')
+    completed = request.json.get('completed')
+    query = "UPDATE todos SET "
+    params = []
+    if content is not None:
+        query += "content = %s, "
+        params.append(content)
+    if completed is not None:
+        query += "completed = %s, "
+        params.append(completed)
+    query = query.rstrip(", ")  # Remove trailing comma
+    query += " WHERE id = %s RETURNING id, content, completed;"
+    params.append(id)
     try:
         with conn.cursor() as cur:
-            cur.execute("UPDATE todos SET completed = %s WHERE id = %s RETURNING id, content, completed;", (completed, id))
+            cur.execute(query, tuple(params))
             updated_todo = cur.fetchone()
             print("Updated todo:", updated_todo)  # Log du todo mis à jour
             conn.commit()
@@ -63,6 +75,19 @@ def update_todo(id):
         print(f"Error updating todo: {e}")
         conn.rollback()
         return jsonify({'error': 'Error updating todo'}), 500
+
+@app.route('/todos/<int:id>', methods=['DELETE'])
+def delete_todo(id):
+    try:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM todos WHERE id = %s RETURNING id;", (id,))
+            deleted_id = cur.fetchone()
+            conn.commit()
+        return jsonify({'id': deleted_id[0]})
+    except psycopg2.Error as e:
+        print(f"Error deleting todo: {e}")
+        conn.rollback()
+        return jsonify({'error': 'Error deleting todo'}), 500
 
 @app.route('/todos/completed', methods=['DELETE'])
 def delete_completed_todos():
