@@ -8,6 +8,10 @@ services:
       - db-data:/var/lib/postgresql/data
     networks:
       - todolist-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: todolist
 
   backend:
     build:
